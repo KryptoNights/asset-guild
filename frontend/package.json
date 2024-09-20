@@ -21,6 +21,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-modal": "^3.16.3",
     "daisyui": "^4.12.10",
     "mini-css-extract-plugin": "^2.9.1",
     "postcss": "^8",

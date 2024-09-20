@@ -11,3 +11,4 @@ export default function Document() {
     </Html>
   );
 }
+// i want to create an website like unsplash for stock photos using web3 i.e blockchain where user can set a price for their photo

@@ -50,6 +50,7 @@ async function performImageMagic(image: File) {
 
     // Log or process the response
     console.log("Response:", response.data);
+    return response.data;
   } catch (error: any) {
     console.error("Error calling Cloud Function:", error.message);
   }
@@ -64,7 +65,6 @@ const UploadPage = () => {
   const [currentTag, setCurrentTag] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [verificationLevel, setVerificationLevel] = useState<number>(0);
-  const [isVerified, setIsVerified] = useState<boolean>(false);
 
   const { primaryWallet } = useDynamicContext();
   const userWallets = useUserWallets();
@@ -119,7 +119,7 @@ const UploadPage = () => {
   // TODO: Functionality after verifying
   const onSuccess = async () => {
     console.log("Success");
-    setIsVerified(true);
+    // setIsVerified(true);
     
     if (!allSet()) return;
     const signer = await getSigner(primaryWallet!);
@@ -151,6 +151,7 @@ const UploadPage = () => {
 
   const handleImageUpload = async (file: File) => {
     if (!allSet()) return;
+    
     setSubmitting("Checking verification level");
     const signer = await getSigner(primaryWallet!);
     const Shutter = new Contract(SHUTTER_CONTRACT, ABI, signer);
@@ -161,7 +162,7 @@ const UploadPage = () => {
     }
 
     setSubmitting("Performing Image Magic");
-    const res: any = performImageMagic(file);
+    const res: any = await performImageMagic(file);
     console.log("Image magic response: ", res);
 
     setSubmitting("Storing on-chain");
@@ -221,7 +222,7 @@ const UploadPage = () => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!image) {
       setError("Please upload an image");
       return;
@@ -236,7 +237,7 @@ const UploadPage = () => {
     }
     // Implement submission logic here
     console.log("Submitting:", { image, price, tags });
-    handleImageUpload(image);
+    await handleImageUpload(image);
     setError(null);
   };
   
@@ -247,7 +248,7 @@ const UploadPage = () => {
         
         <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
           <h2 className="text-2xl font-semibold mb-4">Step 1: Verification</h2>
-          {!isVerified ? (
+          {verificationLevel == 0 ? (
             <div className="flex flex-col items-center">
               <p className="mb-4 text-center text-lg">Please verify with World ID to unlock upload functionality.</p>
               <IDKitWidget
@@ -276,9 +277,9 @@ const UploadPage = () => {
           )}
         </div>
 
-        <div className={`bg-white shadow-lg rounded-lg p-6 ${!isVerified ? 'opacity-50 pointer-events-none' : ''}`}>
+        <div className={`bg-white shadow-lg rounded-lg p-6 ${verificationLevel == 0 ? 'opacity-50 pointer-events-none' : ''}`}>
           <h2 className="text-2xl font-semibold mb-4">Step 2: Upload Your Photo</h2>
-          {!isVerified && (
+          {verificationLevel == 0 && (
             <div className="absolute inset-0 bg-gray-200 bg-opacity-50 flex items-center justify-center z-10 rounded-lg">
               {/* <p className="text-xl font-semibold text-gray-600">Please complete verification to unlock</p> */}
             </div>
@@ -317,7 +318,7 @@ const UploadPage = () => {
                   className="hidden"
                   onChange={handleImageChange}
                   accept="image/*"
-                  disabled={!isVerified}
+                  disabled={verificationLevel == 0}
                 />
               </label>
               {preview && (
@@ -345,7 +346,7 @@ const UploadPage = () => {
                     className="input input-bordered w-full bg-white"
                     value={price}
                     onChange={handlePriceChange}
-                    disabled={!isVerified}
+                    disabled={verificationLevel == 0}
                   />
                 </label>
                 {error && error.includes("price") && (
@@ -367,12 +368,12 @@ const UploadPage = () => {
                     value={currentTag}
                     onChange={handleTagChange}
                     onKeyDown={(e) => e.key === "Enter" && handleAddTag()}
-                    disabled={!isVerified}
+                    disabled={verificationLevel == 0}
                   />
                   <button
                     className="btn bg-blue-600 text-white hover:bg-blue-700"
                     onClick={handleAddTag}
-                    disabled={!isVerified}
+                    disabled={verificationLevel == 0}
                   >
                     Add
                   </button>
@@ -389,7 +390,7 @@ const UploadPage = () => {
                     <button
                       onClick={() => handleRemoveTag(tag)}
                       className="btn btn-xs btn-circle btn-ghost text-blue-800"
-                      disabled={!isVerified}
+                      disabled={verificationLevel == 0}
                     >
                       ✕
                     </button>
@@ -421,12 +422,12 @@ const UploadPage = () => {
           <div className="mt-8">
             <button
               className={`btn btn-primary btn-block py-3 text-lg font-semibold ${
-                isVerified
+                verificationLevel > 0
                   ? "bg-blue-600 hover:bg-blue-700"
                   : "bg-gray-400 cursor-not-allowed"
               } transition-all duration-300`}
               onClick={handleSubmit}
-              disabled={!isVerified}
+              disabled={verificationLevel == 0}
             >
               {submitting}
             </button>

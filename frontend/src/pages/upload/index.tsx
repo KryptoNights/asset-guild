@@ -5,7 +5,7 @@ import { useDynamicContext, useUserWallets } from "@/lib/dynamic";
 import { getSigner } from "@dynamic-labs/ethers-v6";
 // import fs from 'fs';
 import React, { useState, ChangeEvent, useEffect } from "react";
-import { ABI, IMAGE_MAGIC_URL, SHUTTER_CONTRACT } from "utils/consts";
+import { ABI, IMAGE_MAGIC_URL, ORB_VERIFICATION, SHUTTER_CONTRACT } from "utils/consts";
 import { Contract } from "ethers";
 import { IDKitWidget, VerificationLevel } from "@worldcoin/idkit";
 import axios from "axios";
@@ -32,12 +32,15 @@ async function performImageMagic(image: File) {
       reader.readAsArrayBuffer(image);
     });
 
+    const type = image.type;
+    console.log("Type: ", type);
+
     // Set up axios request config
     const config = {
       method: "put", // PUT method for your Cloud Function
       url: IMAGE_MAGIC_URL,
       headers: {
-        "Content-Type": "image/jpeg", // Adjust content type based on your file type
+        "Content-Type": type,
       },
       data: fileBuffer, // Pass the file buffer as the request body
     };
@@ -53,6 +56,7 @@ async function performImageMagic(image: File) {
 }
 
 const UploadPage = () => {
+  const [submitting, setSubmitting] = useState<string>("Upload Content");
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [price, setPrice] = useState<string>("");
@@ -96,16 +100,31 @@ const UploadPage = () => {
   // TODO: Calls your implemented server route
   const verifyProof = async (proof: any) => {
     console.log(proof);
-    for (const wallet of userWallets) {
-      console.log(wallet.address);
-      await lightlyVerify(SHUTTER_CONTRACT, wallet.address, proof);
+    if (!allSet()) return;
+
+    const signer = await getSigner(primaryWallet!);
+    const Shutter = new Contract(SHUTTER_CONTRACT, ABI, signer);
+    
+    if (ORB_VERIFICATION) {
+      Shutter.verifyOrbAndExecute(await signer.getAddress(), proof.merkle_root, proof.nullifier_hash, proof.proof);
     }
+    // for (const wallet of userWallets) {
+    //   console.log(wallet.address);
+    //   await lightlyVerify(SHUTTER_CONTRACT, wallet.address, proof);
+    // }
     //   throw new Error("TODO: verify proof server route")
   };
 
   // TODO: Functionality after verifying
-  const onSuccess = () => {
+  const onSuccess = async () => {
     console.log("Success");
+    
+    if (!allSet()) return;
+    const signer = await getSigner(primaryWallet!);
+    const Shutter = new Contract(SHUTTER_CONTRACT, ABI, signer);
+
+    const verification = await Shutter.lightVerify();
+    await verification.wait();
   };
 
   const checkVerificationLevel = async () => {
@@ -128,8 +147,9 @@ const UploadPage = () => {
     checkVerificationLevel();
   }, [primaryWallet]);
 
-  const handleImageUpload = async (filePath: string) => {
+  const handleImageUpload = async (file: File) => {
     if (!allSet()) return;
+    setSubmitting("Checking verification level");
     const signer = await getSigner(primaryWallet!);
     const Shutter = new Contract(SHUTTER_CONTRACT, ABI, signer);
     const verification_level = await checkVerificationLevel();
@@ -137,7 +157,17 @@ const UploadPage = () => {
       console.error("Verification level too low");
       return;
     }
-  };
+
+    setSubmitting("Performing Image Magic");
+    const res: any = performImageMagic(file);
+    console.log("Image magic response: ", res);
+
+    setSubmitting("Storing on-chain");
+    const uploadRes = await Shutter.uploadContent(res.watermarkedImageHash, res.originalImageHash, price);
+    await uploadRes.wait();
+
+    setSubmitting("Upload Content");
+  }
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -204,23 +234,23 @@ const UploadPage = () => {
     }
     // Implement submission logic here
     console.log("Submitting:", { image, price, tags });
-    handleImageUpload("test.jpg");
+    handleImageUpload(image);
     setError(null);
   };
-
+  
   return (
     <Layout>
       {" "}
       <>
         <div className="container mx-auto px-4 py-8 max-w-4xl h-screen  text-white overflow-hidden">
           {verificationLevel == 0 ? (
-            <IDKitWidget
-              app_id="key"
-              action="verify-personhood"
-              verification_level={VerificationLevel.Device}
-              handleVerify={verifyProof}
-              onSuccess={onSuccess}
-            >
+        <IDKitWidget
+          app_id="key"
+          action="verify-personhood"
+          // On-chain only accepts Orb verifications
+          verification_level={VerificationLevel.Device}
+          handleVerify={verifyProof}
+          onSuccess={onSuccess}>
               {({ open }) => (
                 <button
                   onClick={open}
@@ -378,7 +408,7 @@ const UploadPage = () => {
                   className="btn btn-primary btn-block py-3 text-lg font-semibold bg-blue-700 hover:bg-blue-500 transition-all duration-300"
                   onClick={handleSubmit}
                 >
-                  Submit Image
+                  {submitting}
                 </button>
               </div>
             </div>

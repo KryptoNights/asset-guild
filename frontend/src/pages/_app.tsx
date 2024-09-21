@@ -8,17 +8,17 @@ import React from "react";
 export default function App({ Component, pageProps }: AppProps) {
   const [isTransitioning, setIsTransitioning] = useState(false); // Add state
 
-  const handleTransition = () => {
-    startTransition(() => {
-      // Wrap the state update in startTransition
-      setIsTransitioning(true);
-      setTimeout(() => setIsTransitioning(false), 1000); // Simulate a delay
-    });
-  };
+  // const handleTransition = () => {
+  //   startTransition(() => {
+  //     // Wrap the state update in startTransition
+  //     setIsTransitioning(true);
+  //     setTimeout(() => setIsTransitioning(false), 1000); // Simulate a delay
+  //   });
+  // };
 
-  useEffect(() => {
-    handleTransition(); // Call handleTransition inside useEffect
-  }, []); // Empty dependency array to run once on mount
+  // useEffect(() => {
+  //   handleTransition(); // Call handleTransition inside useEffect
+  // }, []); // Empty dependency array to run once on mount
 
   return (
     <React.Suspense>

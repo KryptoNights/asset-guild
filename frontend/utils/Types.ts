@@ -5,4 +5,5 @@ export type ImageDataType = {
     category: string
     imageUrl: string
     alt: string
+    purchaseCount: number
 }

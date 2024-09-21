@@ -1,98 +1,167 @@
-import Layout from "@/components/Layout/Layout";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { FaUser } from "react-icons/fa"; // Add this import for the user icon
+import Link from "next/link";
+import { FaUser, FaFolder, FaStar, FaUpload } from "react-icons/fa";
+import Layout from "@/components/Layout/Layout";
+import { getPurchasedImages } from "@/apis/graph";
+import { useDynamicContext, useUserWallets } from "@/lib/dynamic";
+import { getSigner } from "@dynamic-labs/ethers-v6";
+import { ABI, SHUTTER_CONTRACT } from "utils/consts";
+import { Contract } from "ethers";
 
 const ProfilePage = () => {
-  // Dummy data
+  const [activeTab, setActiveTab] = useState("Collections");
+  const [purchasedImages, setPurchasedImages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const { primaryWallet } = useDynamicContext();
+  const userWallets = useUserWallets();
+
+  const allSet = (): boolean => {
+    if (!primaryWallet) {
+      console.error("No primary wallet connected");
+      return false;
+    }
+    if (userWallets.length === 0) {
+      console.error("No wallets connected");
+      return false;
+    }
+    return true;
+  };
+
+  useEffect(() => {
+    fetchPurchased();
+  }, [primaryWallet, userWallets]);
+
+  const fetchPurchased = async () => {
+    setLoading(true);
+    if (!allSet()) {
+      setLoading(false);
+      return;
+    }
+
+    const signer = await getSigner(primaryWallet!);
+    const Shutter = new Contract(SHUTTER_CONTRACT, ABI, signer);
+
+    const images = await getPurchasedImages(Shutter);
+    console.log(images);
+
+    if (images) {
+      setPurchasedImages(images);
+    }
+    setLoading(false);
+  }
+
+  // Dummy data for other sections
   const userAddress = "0x1234...5678";
   const userBalance = "1.23 ETH";
-  const userCollections = [
-    { id: 1, name: "Collection 1", image: "/assets/sample-photo.avif" },
-    { id: 2, name: "Collection 2", image: "/assets/sample-photo.avif" },
-    { id: 3, name: "Collection 3", image: "/assets/sample-photo.avif" },
-  ];
+  const userName = "John Doe";
   const userWatchlist = [
     { id: 1, name: "Item 1", image: "/assets/sample-photo.avif" },
     { id: 2, name: "Item 2", image: "/assets/sample-photo.avif" },
     { id: 3, name: "Item 3", image: "/assets/sample-photo.avif" },
   ];
-  const userName = "John Doe"; // Add this line for the user's name
-
-  // Add dummy data for user uploaded images
   const userUploadedImages = [
     { id: 1, name: "Upload 1", image: "/assets/sample-photo.avif" },
     { id: 2, name: "Upload 2", image: "/assets/sample-photo.avif" },
     { id: 3, name: "Upload 3", image: "/assets/sample-photo.avif" },
   ];
 
+  const tabs = [
+    { name: "Collections", icon: FaFolder },
+    { name: "Watchlist", icon: FaStar },
+    { name: "Uploads", icon: FaUpload },
+  ];
+
+  const renderTabContent = () => {
+    const renderGrid = (items: any[]) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {items.map((item: any) => (
+          <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105">
+            <Image
+              src={item.image || "/assets/placeholder-image.jpg"}
+              alt={item.name}
+              width={300}
+              height={300}
+              className="w-full h-48 object-cover"
+            />
+            <div className="p-4">
+              <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+
+    switch (activeTab) {
+      case "Collections":
+        if (loading) {
+          return <p className="text-center text-gray-600">Loading...</p>;
+        }
+        if (purchasedImages.length === 0) {
+          return (
+            <div className="text-center">
+              <p className="text-gray-600 mb-4">No images purchased yet.</p>
+              <Link href="/" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                Go to Marketplace
+              </Link>
+            </div>
+          );
+        }
+        return renderGrid(purchasedImages);
+      case "Watchlist":
+        return renderGrid(userWatchlist);
+      case "Uploads":
+        return renderGrid(userUploadedImages);
+      default:
+        return null;
+    }
+  };
+
   return (
     <Layout>
-      <div className="min-h-screen bg-black text-white p-8">
-        <div className="max-w-full mx-auto">
-          <div className="bg-gray-900 rounded-lg p-6 mb-8 flex items-center">
-            <div className="w-24 h-24 bg-gray-700 rounded-full flex items-center justify-center mr-6">
-              <FaUser className="text-4xl text-gray-400" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold mb-2">{userName}</h1>
-              <p className="mb-1">Address: {userAddress}</p>
-              <p>Balance: {userBalance}</p>
-            </div>
-          </div>
-
-          <div className="mb-8">
-            <h2 className="text-xl font-bold mb-4">Your Collections</h2>
-            <div className="grid grid-cols-3 gap-4">
-              {userCollections.map((collection) => (
-                <div key={collection.id} className="bg-gray-800 rounded-lg p-4">
-                  <Image
-                    src={collection.image}
-                    alt={collection.name}
-                    width={300}
-                    height={300}
-                    className="rounded-lg mb-2 w-full h-auto"
-                  />
-                  <p className="text-center">{collection.name}</p>
-                </div>
-              ))}
+      <div className="min-h-screen bg-gray-100 text-gray-800">
+        <div className="container mx-auto px-4 py-8">
+          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div className="flex flex-col sm:flex-row items-center">
+              <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mb-4 sm:mb-0 sm:mr-6">
+                <FaUser className="text-4xl text-blue-500" />
+              </div>
+              <div className="text-center sm:text-left">
+                <h1 className="text-2xl font-bold mb-2">{userName}</h1>
+                <p className="mb-1 text-gray-600">Address: {userAddress}</p>
+                <p className="text-gray-600">Balance: {userBalance}</p>
+              </div>
             </div>
           </div>
 
-          {/* New section for user uploaded images */}
-          <div className="mb-8">
-            <h2 className="text-xl font-bold mb-4">Your Uploaded Images</h2>
-            <div className="grid grid-cols-3 gap-4">
-              {userUploadedImages.map((upload) => (
-                <div key={upload.id} className="bg-gray-800 rounded-lg p-4">
-                  <Image
-                    src={upload.image}
-                    alt={upload.name}
-                    width={300}
-                    height={300}
-                    className="rounded-lg mb-2 w-full h-auto"
-                  />
-                  <p className="text-center">{upload.name}</p>
-                </div>
-              ))}
+          <div className="flex flex-col md:flex-row">
+            {/* Sidebar */}
+            <div className="w-full md:w-64 mb-6 md:mb-0 md:mr-8">
+              <div className="bg-white rounded-lg shadow-md p-4">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.name}
+                    className={`flex items-center w-full text-left py-3 px-4 rounded mb-2 transition-colors ${
+                      activeTab === tab.name
+                        ? "bg-blue-500 text-white"
+                        : "hover:bg-blue-100 text-gray-700"
+                    }`}
+                    onClick={() => setActiveTab(tab.name)}
+                  >
+                    <tab.icon className="mr-3" />
+                    {tab.name}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div>
-            <h2 className="text-xl font-bold mb-4">Your Watchlist</h2>
-            <div className="grid grid-cols-3 gap-4">
-              {userWatchlist.map((item) => (
-                <div key={item.id} className="bg-gray-800 rounded-lg p-4">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    width={300}
-                    height={300}
-                    className="rounded-lg mb-2 w-full h-auto"
-                  />
-                  <p className="text-center">{item.name}</p>
-                </div>
-              ))}
+            {/* Main content */}
+            <div className="flex-1">
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-bold mb-6">Your {activeTab}</h2>
+                {renderTabContent()}
+              </div>
             </div>
           </div>
         </div>

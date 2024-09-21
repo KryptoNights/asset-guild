@@ -4,9 +4,7 @@ export default function Layout({ children }: any) {
   return (
     <>
       <Navbar />
-      <div className="mx-4 mb-4 block flex-grow bg-black h-full">
-        {children}
-      </div>
+      <div className="mb-4 block flex-grow bg-[#EFF2FA] h-full">{children}</div>
     </>
   );
 }

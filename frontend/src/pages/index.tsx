@@ -7,7 +7,8 @@ import ImageGrid from "@/components/ImageGrid/ImageGrid";
 import Layout from "@/components/Layout/Layout";
 import { ImageDataType } from "utils/Types";
 import { getAllImages } from "@/apis/graph";
-
+import UPLOAD from "public/icons/User Interface Icons/Sharp/BLACK/PNG/upload-sharp.png";
+import Image from "next/image";
 export default function Page() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,8 +26,10 @@ export default function Page() {
           price: image.price,
           purchaseCount: image.purchaseCount,
           timeStamp: image.timeStamp,
+          creator: image.creator,
           category: image.category || "Uncategorized", // Ensure each image has a category
         }));
+        // console.log(response);
         setImages(formattedImages);
       } catch (error) {
         console.error("Error fetching images:", error);
@@ -49,13 +52,13 @@ export default function Page() {
       <div className="container mx-auto px-4 py-8 min-h-screen ">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-primary">
-            Web3 Stock Photos
+            ⌐◑-◑ Web3 Stock Gaming Assets
           </h1>
           <p className="text-lg md:text-xl text-base-content opacity-75">
-            Decentralized marketplace for unique stock photos
+            Decentralized marketplace for unique assests
           </p>
         </div>
-
+        {/* 
         <div className="flex flex-wrap justify-center gap-2 mb-8">
           <button
             onClick={() => setSelectedCategory(null)}
@@ -76,7 +79,7 @@ export default function Page() {
               {category}
             </button>
           ))}
-        </div>
+        </div> */}
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
@@ -92,8 +95,8 @@ export default function Page() {
 
         <div className="mt-16 text-center">
           <Link href="/upload" className="btn btn-primary btn-lg gap-2">
-            <Upload className="w-5 h-5" />
-            Upload Your Photo
+            <Image src={UPLOAD} alt={""} width={20} height={20} /> Upload Your
+            Photo
           </Link>
         </div>
       </div>

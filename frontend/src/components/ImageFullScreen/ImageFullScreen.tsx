@@ -8,7 +8,10 @@ import {
   ClipboardCopyIcon,
 } from "@heroicons/react/outline";
 import { CheckIcon } from "@heroicons/react/solid";
-
+import { useEnsAvatar, useEnsName } from "wagmi";
+import THUMBSUP from "public/icons/User Interface Icons/Sharp/WHITE/PNG/thumbs-up-sharp.png";
+import SHARE from "public/icons/User Interface Icons/Sharp/WHITE/PNG/share-sharp.png";
+import DOWNLOAD from "public/icons/User Interface Icons/Sharp/WHITE/PNG/download-cloud-sharp.png";
 const ImageFullScreen = ({
   isOpen,
   setIsModalOpen,
@@ -17,6 +20,7 @@ const ImageFullScreen = ({
   photographer,
   description,
   purchaseCount,
+  creator,
 }: {
   isOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
@@ -25,6 +29,7 @@ const ImageFullScreen = ({
   photographer: string;
   description: string;
   purchaseCount: number;
+  creator: any;
 }) => {
   const [liked, setLiked] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -35,21 +40,34 @@ const ImageFullScreen = ({
     // Implement download logic here
     console.log("Downloading image...");
   };
-
   const handleCopyLink = () => {
     if (linkInputRef.current) {
       linkInputRef.current.select();
-      document.execCommand('copy');
+      document.execCommand("copy");
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     }
   };
 
   if (!isOpen) return null;
+  const { data: name } = useEnsName({
+    address: (creator as `0x${string}`) || "",
+    chainId: 1,
+  });
+  // const { data: name } = useEnsName({
+  //   address:
+  //     ("0xb8c2c29ee19d8307cb7255e1cd9cbde883a267d5" as `0x${string}`) || "",
+  //   chainId: 1,
+  // });
+
+  const { data: avatar } = useEnsAvatar({ name: name ?? "" });
 
   return (
-    <div className="modal modal-open">
-      <div className="modal-box w-11/12 max-w-5xl h-5/6 p-0 relative">
+    <div className="modal modal-open" onClick={() => setIsModalOpen(false)}>
+      <div
+        className="modal-box w-11/12 max-w-5xl h-5/6 p-0 relative"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button
           className="btn btn-sm btn-circle absolute right-2 top-2 z-10"
           onClick={() => setIsModalOpen(false)}
@@ -73,32 +91,49 @@ const ImageFullScreen = ({
 
           {/* Info section */}
           <div className="w-full md:w-1/3 p-6 flex flex-col h-1/2 md:h-full">
-            <h2 className="text-2xl font-bold text-base-content mb-2">{title}</h2>
-            <p className="text-sm text-base-content/70 mb-4">by {photographer}</p>
-            
-            <div className="flex-grow mb-4 overflow-y-auto">
+            <h2 className="text-2xl font-bold text-base-content mb-2">
+              {title}
+            </h2>
+            <p className="text-sm text-base-content/70 mb-4 flex center">
+              <div className=" bottom-0 left-0 right-0 p-2  bg-opacity-50 text-white text-sm flex gap-2">
+                <div>
+                  <img
+                    src={avatar || "https://docs.ens.domains/fallback.svg"}
+                    alt="Avatar"
+                    className="w-6 h-6 rounded-full inline-block"
+                  />
+                </div>
+                <div>
+                  {name || `${creator.slice(0, 6)}..${creator.slice(-4)}`}
+                </div>
+              </div>
+            </p>
+
+            {/* <div className="flex-grow mb-4 overflow-y-auto">
               <p className="text-base-content/80">{description}</p>
-            </div>
-            
+            </div> */}
+
             <div className="flex justify-between items-center mb-4">
               <div className="flex space-x-2">
                 <button
                   onClick={() => setLiked(!liked)}
-                  className={`btn btn-circle btn-sm ${liked ? 'btn-primary' : 'btn-ghost'}`}
+                  className={`btn btn-circle btn-sm ${
+                    liked ? "btn-primary" : "btn-ghost"
+                  }`}
                 >
-                  <HeartIcon className="h-5 w-5" />
+                  <Image src={THUMBSUP} width={20} height={20} alt={""} />
                 </button>
-                <button 
+                <button
                   onClick={handleDownload}
                   className="btn btn-circle btn-sm btn-ghost"
                 >
-                  <DownloadIcon className="h-5 w-5" />
+                  <Image src={DOWNLOAD} width={20} height={20} alt={""} />
                 </button>
-                <button 
+                <button
                   className="btn btn-circle btn-sm btn-ghost"
                   onClick={() => setIsShareOpen(!isShareOpen)}
                 >
-                  <ShareIcon className="h-5 w-5" />
+                  <Image src={SHARE} width={20} height={20} alt={""} />
                 </button>
               </div>
               <div className="text-sm text-base-content/70">

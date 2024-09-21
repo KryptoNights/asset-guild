@@ -6,4 +6,5 @@ export type ImageDataType = {
     imageUrl: string
     alt: string
     purchaseCount: number
+    creator: string,
 }

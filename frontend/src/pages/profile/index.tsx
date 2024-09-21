@@ -50,7 +50,7 @@ const ProfilePage = () => {
       setPurchasedImages(images);
     }
     setLoading(false);
-  }
+  };
 
   // Dummy data for other sections
   const userAddress = "0x1234...5678";
@@ -77,7 +77,10 @@ const ProfilePage = () => {
     const renderGrid = (items: any[]) => (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((item: any) => (
-          <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105">
+          <div
+            key={item.id}
+            className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105"
+          >
             <Image
               src={item.image || "/assets/placeholder-image.jpg"}
               alt={item.name}
@@ -86,7 +89,9 @@ const ProfilePage = () => {
               className="w-full h-48 object-cover"
             />
             <div className="p-4">
-              <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
+              <h3 className="text-lg font-semibold text-gray-800">
+                {item.name}
+              </h3>
             </div>
           </div>
         ))}
@@ -102,7 +107,10 @@ const ProfilePage = () => {
           return (
             <div className="text-center">
               <p className="text-gray-600 mb-4">No images purchased yet.</p>
-              <Link href="/" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+              <Link
+                href="/"
+                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+              >
                 Go to Marketplace
               </Link>
             </div>
@@ -122,7 +130,7 @@ const ProfilePage = () => {
     <Layout>
       <div className="min-h-screen bg-gray-100 text-gray-800">
         <div className="container mx-auto px-4 py-8">
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          {/* <div className="bg-white rounded-lg shadow-md p-6 mb-8">
             <div className="flex flex-col sm:flex-row items-center">
               <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mb-4 sm:mb-0 sm:mr-6">
                 <FaUser className="text-4xl text-blue-500" />
@@ -133,7 +141,7 @@ const ProfilePage = () => {
                 <p className="text-gray-600">Balance: {userBalance}</p>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex flex-col md:flex-row">
             {/* Sidebar */}

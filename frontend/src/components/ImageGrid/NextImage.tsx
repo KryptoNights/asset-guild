@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import ImageFullScreen from "../ImageFullScreen/ImageFullScreen";
 import React from "react";
+import { useAccount, useEnsName, useEnsAvatar } from "wagmi";
 import { ShoppingCart } from "lucide-react";
 
 type Image = {
@@ -12,12 +13,14 @@ type Image = {
   alt: string;
   ar: string;
   purchaseCount: number;
+  creator: string;
 };
 
 export default function NextImage({
   image,
   alt,
   ar,
+  creator,
   purchaseCount: initialPurchases,
 }: Image) {
   const [isLoading, setIsLoading] = useState(true);
@@ -30,8 +33,20 @@ export default function NextImage({
     setIsModalOpen(true);
   };
 
-  console.log("hh", ar);
+  // console.log("hh", ar);
   const closeModal = () => setIsModalOpen(false);
+  const { data: name } = useEnsName({
+    address: (creator as `0x${string}`) || "",
+    chainId: 1,
+  });
+  // const { data: name } = useEnsName({
+  //   address:
+  //     ("0xb8c2c29ee19d8307cb7255e1cd9cbde883a267d5" as `0x${string}`) || "",
+  //   chainId: 1,
+  // });
+
+  // console.log(creator);
+  const { data: avatar } = useEnsAvatar({ name: name ?? "" });
 
   return (
     <>
@@ -61,20 +76,31 @@ export default function NextImage({
           )}
           onLoad={() => setIsLoading(false)}
         />
+        {/* User Info Section */}
+        <div className="absolute bottom-0 left-0 right-0 p-2 bg-black bg-opacity-50 text-white text-sm flex gap-2">
+          <div>
+            <img
+              src={avatar || "https://docs.ens.domains/fallback.svg"}
+              alt="Avatar"
+              className="w-6 h-6 rounded-full inline-block"
+            />
+          </div>
+          <div>{name || `${creator.slice(0, 6)}..${creator.slice(-4)}`}</div>
+        </div>
       </figure>
 
       {isModalOpen && (
         <ImageFullScreen
           setIsModalOpen={setIsModalOpen}
           imageUrl={image}
+          creator={creator}
           isOpen={isModalOpen}
-          title="sample"
+          title="Building"
           photographer="sample"
           description="lorem ipsum dolor sit amet"
           purchaseCount={purchaseCount}
         />
       )}
-
     </>
   );
 }

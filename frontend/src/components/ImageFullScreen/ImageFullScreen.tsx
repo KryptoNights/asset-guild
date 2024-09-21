@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import Image from "next/image";
+import toast from 'react-hot-toast';
 import {
   HeartIcon,
   DownloadIcon,
@@ -12,6 +13,20 @@ import { useEnsAvatar, useEnsName } from "wagmi";
 import THUMBSUP from "public/icons/User Interface Icons/Sharp/WHITE/PNG/thumbs-up-sharp.png";
 import SHARE from "public/icons/User Interface Icons/Sharp/WHITE/PNG/share-sharp.png";
 import DOWNLOAD from "public/icons/User Interface Icons/Sharp/WHITE/PNG/download-cloud-sharp.png";
+import {
+  useDynamicContext,
+  useUserWallets,
+} from "@dynamic-labs/sdk-react-core";
+import { getSigner } from "@dynamic-labs/ethers-v6";
+import { Contract } from "ethers";
+import { purchaseContent } from "utils/transitions";
+import {
+  ABI,
+  IMAGE_MAGIC_URL,
+  ORB_VERIFICATION,
+  SHUTTER_CONTRACT,
+} from "utils/consts";
+
 const ImageFullScreen = ({
   isOpen,
   setIsModalOpen,
@@ -19,6 +34,7 @@ const ImageFullScreen = ({
   title,
   photographer,
   description,
+  contentHash,
   purchaseCount,
   creator,
 }: {
@@ -28,6 +44,7 @@ const ImageFullScreen = ({
   title: string;
   photographer: string;
   description: string;
+  contentHash: any;
   purchaseCount: number;
   creator: any;
 }) => {
@@ -35,6 +52,54 @@ const ImageFullScreen = ({
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const linkInputRef = useRef<HTMLInputElement>(null);
+
+  const { primaryWallet } = useDynamicContext();
+  const userWallets = useUserWallets();
+
+  const allSet = (): boolean => {
+    if (!primaryWallet) {
+      console.error("No primary wallet connected");
+      return false;
+    }
+    if (userWallets.length === 0) {
+      console.error("No wallets connected");
+      return false;
+    }
+    return true;
+  };
+  const handleBuy = async () => {
+    if (!allSet()) return;
+
+    const signer = await getSigner(primaryWallet!);
+    const Shutter = new Contract(SHUTTER_CONTRACT, ABI, signer);
+
+    try {
+      const response = await purchaseContent(
+        Shutter,
+        creator,
+        contentHash,
+        "100"
+      );
+      console.log("response",response);
+      
+      // Wait for the transaction to be mined
+      await response.wait();
+      
+      // Show success toast
+      toast.success('Image purchased successfully!', {
+        duration: 3000,
+        position: 'top-right',
+      });
+    } catch (error) {
+      console.error('Purchase failed:', error);
+      
+      // Show error toast
+      toast.error('Image purchase failed. Please try again.', {
+        duration: 3000,
+        position: 'top-right',
+      });
+    }
+  };
 
   const handleDownload = () => {
     // Implement download logic here
@@ -170,7 +235,7 @@ const ImageFullScreen = ({
               className="btn btn-primary w-full"
               onClick={() => {
                 // Implement buy logic
-                console.log("Buying image...");
+                handleBuy();
               }}
             >
               Buy now

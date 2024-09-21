@@ -12,6 +12,7 @@ type Image = {
   image: string;
   alt: string;
   ar: string;
+  contentHash: any;
   purchaseCount: number;
   creator: string;
 };
@@ -21,8 +22,10 @@ export default function NextImage({
   alt,
   ar,
   creator,
+  contentHash,
   purchaseCount: initialPurchases,
 }: Image) {
+
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -97,7 +100,9 @@ export default function NextImage({
           isOpen={isModalOpen}
           title="Building"
           photographer="sample"
+          contentHash={contentHash}
           description="lorem ipsum dolor sit amet"
+
           purchaseCount={purchaseCount}
         />
       )}

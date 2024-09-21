@@ -18,12 +18,14 @@ export default function Page() {
     const fetchImages = async () => {
       try {
         const response = await getAllImages();
+        
         const formattedImages = response.map((image: any) => ({
           _id: image.id,
           imageUrl: image.imageUrl,
           alt: `Image by ${image.creator}`,
           ratio: 1,
           price: image.price,
+          contentHash: image.contentHash,
           purchaseCount: image.purchaseCount,
           timeStamp: image.timeStamp,
           creator: image.creator,

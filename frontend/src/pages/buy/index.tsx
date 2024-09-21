@@ -1,5 +1,11 @@
 import React, { useState } from "react";
 import { ShoppingCart, Info, Check, X } from "lucide-react";
+import { purchaseContent } from "utils/transitions";
+import { useDynamicContext, useUserWallets } from "@/lib/dynamic";
+import { getSigner } from "@dynamic-labs/ethers-v6";
+import { ABI, IMAGE_MAGIC_URL, ORB_VERIFICATION, SHUTTER_CONTRACT } from "utils/consts";
+import { Contract } from "ethers";
+
 
 const CustomAlert = ({ title, children }: any) => (
   <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 rounded-r-lg">
@@ -32,7 +38,29 @@ const Button = ({ children, className = "", onClick }: any) => (
 
 const BuyPage = () => {
   const [showLicenseInfo, setShowLicenseInfo] = useState(false);
-  const [selectedLicense, setSelectedLicense] = useState("standard");
+  const { primaryWallet } = useDynamicContext();
+  const userWallets = useUserWallets();
+
+  const allSet = (): boolean => {
+    if (!primaryWallet) {
+      console.error("No primary wallet connected");
+      return false;
+    }
+    if (userWallets.length === 0) {
+      console.error("No wallets connected");
+      return false;
+    }
+    return true;
+  };
+  
+  const purcharseContent = async () => {
+    if (!allSet()) return;
+
+    const signer = await getSigner(primaryWallet!);
+    const Shutter = new Contract(SHUTTER_CONTRACT, ABI, signer);
+  
+    const response = await purchaseContent(Shutter, creator, ch, 100);
+  };
 
   const licenses = {
     standard: { price: 99.99, duration: "1 year" },

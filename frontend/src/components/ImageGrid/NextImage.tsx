@@ -40,12 +40,14 @@ export default function NextImage({ image, alt, ar }: Image) {
       >
         <Image
           onClick={openModal}
-          fill={true}
+          // fill={true}
           loading={ar === "portrait" ? "eager" : "lazy"}
           priority={ar === "portrait" ? true : false}
           sizes="(min-width: 66em) 33vw, (min-width: 44em) 50vw, 100vw"
           alt={alt}
           src={image}
+          width={2000}
+          height={2000}
           className={clsx(
             "object-cover duration-700 ease-in-out group-hover:cursor-pointer group-hover:opacity-90",
             isLoading

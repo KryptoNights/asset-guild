@@ -10,19 +10,10 @@ import React from "react";
 
 export default function ImageGrid({ data }: { data: Array<ImageDataType> }) {
   return (
-    <Suspense fallback={<Loading />}>
-      <main
-        className={clsx(
-          "h-screen",
-          "mt-4 columns-1 gap-x-4 gap-y-4",
-          "md:columns-2",
-          "lg:columns-3 lg:gap-x-8"
-        )}
-      >
-        {data.map(({ _id, imageUrl, alt, ratio }) => (
-          <NextImage key={_id} image={imageUrl} alt={alt} ar={ratio} />
-        ))}
-      </main>
-    </Suspense>
+    <main className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-max">
+      {data.map(({ _id, imageUrl, alt, ratio }) => (
+        <NextImage key={_id} image={imageUrl} alt={alt} ar={ratio} />
+      ))}
+    </main>
   );
 }

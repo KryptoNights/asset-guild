@@ -1,0 +1,19 @@
+{
+    "name": "backend",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "once": "node index.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "dependencies": {
+        "@lighthouse-web3/sdk": "^0.3.7",
+        "axios": "^1.7.7",
+        "canvas": "^2.11.2",
+        "fs": "^0.0.1-security",
+        "watermarkjs": "^2.1.1"
+    },
+    "type": "module"
+}

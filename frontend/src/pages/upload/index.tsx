@@ -251,7 +251,7 @@ const UploadPage = () => {
             <div className="flex flex-col items-center">
               <p className="mb-4 text-center text-lg">Please verify with World ID to unlock upload functionality.</p>
               <IDKitWidget
-                app_id="key"
+                app_id="app_staging_2fea25caed39f49f896fe7563b5f764e"
                 action="verify-personhood"
                 verification_level={VerificationLevel.Device}
                 handleVerify={verifyProof}

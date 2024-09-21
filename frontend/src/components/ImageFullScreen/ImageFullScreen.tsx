@@ -238,7 +238,7 @@ const ImageFullScreen = ({
 
             <div className="mt-auto">
               <p className="text-lg font-semibold text-center mb-2">
-                Price: {formattedPrice} ETH
+                Price: {formattedPrice} WEI
               </p>
               <button
                 className="btn btn-primary w-full"

@@ -4,6 +4,200 @@ export const GRAPH_URL = 'https://api.studio.thegraph.com/query/80137/shutter-tr
 
 export const ORB_VERIFICATION = false;
 
+export const FHE_CONTRACT = "0x0AF104C5A40C498576859dC4169A1e4b1b7Cd6b7";
+export const FHE_ABI = [
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "originalContent",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "previewHash",
+                "type": "string"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "bytes",
+                        "name": "data",
+                        "type": "bytes"
+                    }
+                ],
+                "internalType": "struct inEuint32",
+                "name": "iek1",
+                "type": "tuple"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "bytes",
+                        "name": "data",
+                        "type": "bytes"
+                    }
+                ],
+                "internalType": "struct inEuint32",
+                "name": "iek2",
+                "type": "tuple"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "bytes",
+                        "name": "data",
+                        "type": "bytes"
+                    }
+                ],
+                "internalType": "struct inEuint32",
+                "name": "iek3",
+                "type": "tuple"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "bytes",
+                        "name": "data",
+                        "type": "bytes"
+                    }
+                ],
+                "internalType": "struct inEuint32",
+                "name": "iek4",
+                "type": "tuple"
+            }
+        ],
+        "name": "addHashToProtect",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_previewHash",
+                "type": "string"
+            },
+            {
+                "internalType": "address",
+                "name": "buyer",
+                "type": "address"
+            },
+            {
+                "internalType": "uint64",
+                "name": "attestationId",
+                "type": "uint64"
+            }
+        ],
+        "name": "addPermissionToView",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "input",
+                "type": "string"
+            }
+        ],
+        "name": "allButLastFour",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "pure",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "previewHash",
+                "type": "string"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "publicKey",
+                "type": "bytes32"
+            }
+        ],
+        "name": "getOriginalContent",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "input",
+                "type": "string"
+            }
+        ],
+        "name": "stringToUint32Array",
+        "outputs": [
+            {
+                "internalType": "euint32[]",
+                "name": "",
+                "type": "uint256[]"
+            }
+        ],
+        "stateMutability": "pure",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint32[]",
+                "name": "input",
+                "type": "uint32[]"
+            }
+        ],
+        "name": "uint32ArrayToString",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "pure",
+        "type": "function"
+    }
+];
+
 export const ABI = [
     {
         "inputs": [

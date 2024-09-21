@@ -9,6 +9,7 @@ import { getSigner, getWeb3Provider } from "@dynamic-labs/ethers-v6";
 import { ABI, FHE_ABI, FHE_CONTRACT, SHUTTER_CONTRACT } from "utils/consts";
 import { Contract } from "ethers";
 import { FhenixClient, getPermit } from "fhenixjs";
+import clsx from "clsx";
 
 const DUAL_CHAIN_ENABLED = false;
 
@@ -56,21 +57,21 @@ const ProfilePage = () => {
     if (DUAL_CHAIN_ENABLED) {
       await primaryWallet?.switchNetwork(8008135);
       while (true) {
-        if (await primaryWallet?.getNetwork() === 8008135) {
+        if ((await primaryWallet?.getNetwork()) === 8008135) {
           break;
         }
       }
       const provider = await getWeb3Provider(primaryWallet!);
       const client = new FhenixClient({ provider });
       const AssetGuildFHE = new Contract(FHE_CONTRACT, FHE_ABI, signer);
-      
+
       const permit = await getPermit(FHE_CONTRACT, provider);
       if (!permit) {
         console.error("Permit not found");
         return;
       }
       const permission = client.extractPermitPermission(permit);
-      
+
       for (let i = 0; i < images_.length; i++) {
         let getval = await AssetGuildFHE.getOriginalContent(
           images_[i].watermarkedImageHash,
@@ -98,7 +99,6 @@ const ProfilePage = () => {
           attestationId: images_[i].attestationId,
           image: `https://gateway.lighthouse.storage/ipfs/${original_hash}`,
         });
-
       }
     }
 
@@ -127,27 +127,43 @@ const ProfilePage = () => {
           </Link>
         </div>
       );
+      2;
     }
+    // function clsx(arg0: string, arg1: string): string | undefined {
+    //   throw new Error("Function not implemented.");
+    // }
+
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+        style={{ height: "100%" }}
+      >
         {purchasedImages.map((item: any) => (
-          <div
-            key={item.id}
-            className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105 relative"
-          >
-            <Image
-              src={item.image || "/assets/placeholder-image.jpg"}
-              alt={item.name}
-              width={300}
-              height={400} // Adjust height for aspect ratio
-              className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
-            />
+          <div key={item.id} className="flex-cols" style={{ height: "100%" }}>
+            <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105 relative w-full h-[calc(100%*3/3)] ">
+              <Image
+                alt={item.name}
+                src={item.image || "/assets/placeholder-image.jpg"}
+                width={300}
+                height={300}
+                className="w-full h-[calc(100%*3/3)] object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
             {/* Buttons outside the image */}
-            <div className="flex justify-between pt-2">
-              <button className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-1 px-2 rounded w-[100%] mr-2" onClick={() => window.open(item.attestation_url, "_blank")}>
+            <div className="flex justify-between pt-2 mt-2">
+              {/* Added mt-2 for margin-top */}
+              <button
+                className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-1 px-2 rounded w-[100%] mr-2"
+                onClick={() => window.open(item.attestation_url, "_blank")}
+              >
                 View Attestation
               </button>
-              <button className="bg-gray-600 hover:bg-green-600 text-white text-sm font-semibold py-1 px-2 rounded" onClick={() => {window.open(item.image, "_blank")}}>
+              <button
+                className="bg-gray-600 hover:bg-green-600 text-white text-sm font-semibold py-1 px-2 rounded"
+                onClick={() => {
+                  window.open(item.image, "_blank");
+                }}
+              >
                 <FaDownload />
               </button>
             </div>
@@ -159,11 +175,17 @@ const ProfilePage = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-100 text-gray-800">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row">
+      <div
+        className="min-h-screen bg-gray-100 text-gray-800"
+        style={{ height: "100%" }}
+      >
+        <div className="container mx-auto px-4 py-8" style={{ height: "100%" }}>
+          <div className="flex flex-col md:flex-row" style={{ height: "100%" }}>
             {/* Sidebar */}
-            <div className="w-full md:w-64 mb-6 md:mb-0 md:mr-8">
+            <div
+              className="w-full md:w-64 mb-6 md:mb-0 md:mr-8"
+              style={{ height: "100%" }}
+            >
               <div className="bg-white rounded-lg shadow-md p-4">
                 <button
                   className={`flex items-center w-full text-left py-3 px-4 rounded mb-2 transition-colors ${
@@ -179,8 +201,11 @@ const ProfilePage = () => {
               </div>
             </div>
             {/* Main Content */}
-            <div className="flex-1">
-              <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex-1 h-full" style={{ height: "100%" }}>
+              <div
+                // className="bg-white rounded-lg shadow-md p-6 "
+                style={{ height: "100%" }}
+              >
                 <h2 className="text-xl font-bold mb-6">Your Collections</h2>
                 {renderCollections()}
               </div>

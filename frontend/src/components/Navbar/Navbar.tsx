@@ -46,14 +46,21 @@ export default function Navbar() {
         <div className="navbar-end">
           <div className="hidden md:flex items-center space-x-4">
             <DynamicWidget />
-            <Link href="/profile">
-              <button className="btn btn-circle btn-primary">
+
+            <Link
+              href="/profile"
+              className="hidden md:flex items-center space-x-4"
+            >
+              <button className="">
                 <img
                   src={avatar || "https://docs.ens.domains/fallback.svg"}
                   alt="Profile"
-                  className="w-8 h-8 rounded-full"
+                  className="w-8 h-8 rounded-full cursor-pointer"
                 />
               </button>
+            </Link>
+            <Link href="/profile">
+              <div>Profile </div>
             </Link>
           </div>
 
@@ -84,7 +91,7 @@ export default function Navbar() {
               </li>
               <li>
                 <Link href="/profile" className="justify-between">
-                  Profile
+                  <div>Profile </div>
                   <img
                     src={avatar || "https://docs.ens.domains/fallback.svg"}
                     alt="Profile"

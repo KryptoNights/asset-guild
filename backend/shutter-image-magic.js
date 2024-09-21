@@ -1,3 +1,13 @@
+const { createCanvas, loadImage } = require('canvas');
+const fs = require('fs');
+const lighthouse = require('@lighthouse-web3/sdk');
+
+const { tmpdir } = require('os');
+const { join } = require('path');
+const { v4: uuidv4 } = require('uuid');
+
+const APIKEY = "YOUR_API_KEY";
+
 // Helper function to add a watermark
 async function addWatermarkToImage(imageBuffer, watermarkText) {
     try {
@@ -28,5 +38,14 @@ async function addWatermarkToImage(imageBuffer, watermarkText) {
         return canvas.toBuffer('image/png');
     } catch (error) {
         throw new Error('Error applying watermark: ' + error.message);
+    }
+}
+
+async function uploadToLighthouse(filePath) {
+    try {
+        const response = await lighthouse.upload(filePath, APIKEY);
+        return response.data.Hash;
+    } catch (error) {
+        throw new Error('Error uploading to Lighthouse: ' + error.message);
     }
 }

@@ -55,7 +55,8 @@ export async function getPurchasedImages(Shutter: Contract) {
                 creatorAddress: tuple[0],           // First item in the tuple is the creator's address
                 originalImageHash: tuple[1],        // Second item is the original image hash (IPFS CID)
                 watermarkedImageHash: tuple[2],     // Third item is the watermarked image hash (IPFS CID)
-                attestationId: Number(tuple[3])  // Fourth item is the purchase count (convert from BigNumber)
+                attestationId: Number(tuple[3]),  // Fourth item is the purchase count (convert from BigNumber)
+                image: `https://gateway.lighthouse.storage/ipfs/${tuple[2]}`
             };
         });
 

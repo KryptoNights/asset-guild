@@ -17,7 +17,7 @@ export default function Navbar() {
   const { data: avatar } = useEnsAvatar({ name: name ?? "" });
 
   return (
-    <nav className="shadow-md">
+    <nav className="shadow-md ">
       <div className="navbar container mx-auto">
         <div className="navbar-start">
           <Link href="/" className="btn btn-ghost normal-case text-xl">

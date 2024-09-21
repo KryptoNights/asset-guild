@@ -10,7 +10,7 @@ export default function Navbar() {
   const { user } = useDynamicContext();
 
   const { data: name } = useEnsName({
-    address: user?.verifiedCredentials[0]?.address as `0x${string}` || "",
+    address: (user?.verifiedCredentials[0]?.address as `0x${string}`) || "",
     chainId: 1,
   });
 
@@ -22,13 +22,15 @@ export default function Navbar() {
         <div className="navbar-start">
           <Link href="/" className="btn btn-ghost normal-case text-xl">
             <Camera className="h-6 w-6 mr-2 text-primary" />
-            <span className="hidden sm:inline text-primary font-bold">AssetGuild</span>
+            <span className="hidden sm:inline text-primary font-bold">
+              AssetGuild
+            </span>
           </Link>
         </div>
 
         <div className="navbar-center hidden lg:flex">
           <div className="form-control">
-            <div className="input-group">
+            <div className="input-group flex">
               <input
                 type="text"
                 placeholder="Search photos"
@@ -55,14 +57,17 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <div className="dropdown dropdown-end md:hidden">
+          <div className="dropdown dropdown-end md:hidden ">
             <label tabIndex={0} className="btn btn-ghost btn-circle">
               <Menu className="h-6 w-6" />
             </label>
-            <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
+            <ul
+              tabIndex={0}
+              className="menu menu-compact dropdown-content mt-3 p-2 shadow rounded-box w-52 bg-white z-10"
+            >
               <li>
-                <div className="form-control mb-2">
-                  <div className="input-group input-group-sm">
+                <div className="form-control mb-2 flex">
+                  <div className="flex input-group input-group-sm ">
                     <input
                       type="text"
                       placeholder="Search photos"
@@ -74,7 +79,9 @@ export default function Navbar() {
                   </div>
                 </div>
               </li>
-              <li><DynamicWidget /></li>
+              <li>
+                <DynamicWidget />
+              </li>
               <li>
                 <Link href="/profile" className="justify-between">
                   Profile

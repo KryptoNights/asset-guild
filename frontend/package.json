@@ -21,6 +21,7 @@
     "@types/js-cookie": "^3.0.6",
     "@worldcoin/idkit": "^1.3.0",
     "axios": "^1.7.7",
+    "fhenixjs": "^0.2.1",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.441.0",
     "next": "14.2.9",

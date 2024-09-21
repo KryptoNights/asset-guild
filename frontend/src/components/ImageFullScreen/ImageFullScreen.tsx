@@ -10,9 +10,9 @@ import {
 } from "@heroicons/react/outline";
 import { CheckIcon } from "@heroicons/react/solid";
 import { useEnsAvatar, useEnsName } from "wagmi";
-import THUMBSUP from "public/icons/User Interface Icons/Sharp/WHITE/PNG/thumbs-up-sharp.png";
-import SHARE from "public/icons/User Interface Icons/Sharp/WHITE/PNG/share-sharp.png";
-import DOWNLOAD from "public/icons/User Interface Icons/Sharp/WHITE/PNG/download-cloud-sharp.png";
+import THUMBSUP from "public/icons/thumbs-up-sharp.png";
+import SHARE from "public/icons/share-sharp.png";
+import DOWNLOAD from "public/icons/download-sharp.png";
 import {
   useDynamicContext,
   useUserWallets,
@@ -71,7 +71,7 @@ const ImageFullScreen = ({
     }
     await primaryWallet.switchNetwork(421614);
     while (true) {
-      if (await primaryWallet.getNetwork() === 421614) {
+      if ((await primaryWallet.getNetwork()) === 421614) {
         break;
       }
     }
@@ -96,18 +96,22 @@ const ImageFullScreen = ({
 
       await primaryWallet?.switchNetwork(8008135);
       while (true) {
-        if (await primaryWallet?.getNetwork() === 8008135) {
+        if ((await primaryWallet?.getNetwork()) === 8008135) {
           break;
         }
       }
 
       const AssetGuildFHE = new Contract(FHE_CONTRACT, FHE_ABI, signer);
-      const permissionSetting = await AssetGuildFHE.addPermissionToView(contentHash, await signer.getAddress(), 1);
+      const permissionSetting = await AssetGuildFHE.addPermissionToView(
+        contentHash,
+        await signer.getAddress(),
+        1
+      );
       await permissionSetting.wait();
 
       await primaryWallet?.switchNetwork(421614);
       while (true) {
-        if (await primaryWallet?.getNetwork() === 421614) {
+        if ((await primaryWallet?.getNetwork()) === 421614) {
           break;
         }
       }
@@ -155,7 +159,8 @@ const ImageFullScreen = ({
   const { data: avatar } = useEnsAvatar({ name: name ?? "" });
 
   // Convert buyPrice to string if it's not already
-  const formattedPrice = typeof buyPrice === 'number' ? buyPrice.toString() : buyPrice;
+  const formattedPrice =
+    typeof buyPrice === "number" ? buyPrice.toString() : buyPrice;
 
   return (
     <div className="modal modal-open" onClick={() => setIsModalOpen(false)}>

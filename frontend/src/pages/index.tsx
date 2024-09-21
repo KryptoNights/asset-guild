@@ -18,7 +18,8 @@ export default function Page() {
     const fetchImages = async () => {
       try {
         const response = await getAllImages();
-        
+        console.log("allimages", response);
+
         const formattedImages = response.map((image: any) => ({
           _id: image.id,
           imageUrl: image.imageUrl,
@@ -27,6 +28,7 @@ export default function Page() {
           price: image.price,
           contentHash: image.contentHash,
           purchaseCount: image.purchaseCount,
+          buyPrice: image.price,
           timeStamp: image.timeStamp,
           creator: image.creator,
           category: image.category || "Uncategorized", // Ensure each image has a category

@@ -7,5 +7,6 @@ export type ImageDataType = {
     alt: string
     contentHash: any
     purchaseCount: number
+    buyPrice: any
     creator: string,
 }

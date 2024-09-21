@@ -11,7 +11,7 @@ import React from "react";
 export default function ImageGrid({ data }: { data: Array<ImageDataType> }) {
   return (
     <main className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-max">
-      {data.map(({ _id, imageUrl, alt, ratio,contentHash, purchaseCount, creator }) => (
+      {data.map(({ _id, imageUrl, alt, ratio,contentHash, purchaseCount, buyPrice, creator }) => (
         <NextImage
           key={_id}
           image={imageUrl}
@@ -20,6 +20,7 @@ export default function ImageGrid({ data }: { data: Array<ImageDataType> }) {
           ar={ratio}
           contentHash={contentHash}
           purchaseCount={purchaseCount}
+          buyPrice={buyPrice}
         />
       ))}
     </main>

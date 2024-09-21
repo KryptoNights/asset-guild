@@ -14,6 +14,7 @@ type Image = {
   ar: string;
   contentHash: any;
   purchaseCount: number;
+  buyPrice: any;
   creator: string;
 };
 
@@ -23,13 +24,12 @@ export default function NextImage({
   ar,
   creator,
   contentHash,
-  purchaseCount: initialPurchases,
+  purchaseCount,
+  buyPrice
 }: Image) {
-
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [purchaseCount, setPurchaseCount] = useState(initialPurchases);
 
   const openModal = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -102,8 +102,8 @@ export default function NextImage({
           photographer="sample"
           contentHash={contentHash}
           description="lorem ipsum dolor sit amet"
-
           purchaseCount={purchaseCount}
+          buyPrice={buyPrice}
         />
       )}
     </>

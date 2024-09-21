@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import Image from "next/image";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 import {
   HeartIcon,
   DownloadIcon,
@@ -36,6 +36,7 @@ const ImageFullScreen = ({
   description,
   contentHash,
   purchaseCount,
+  buyPrice,
   creator,
 }: {
   isOpen: boolean;
@@ -46,6 +47,7 @@ const ImageFullScreen = ({
   description: string;
   contentHash: any;
   purchaseCount: number;
+  buyPrice: string | number;
   creator: any;
 }) => {
   const [liked, setLiked] = useState(false);
@@ -80,23 +82,23 @@ const ImageFullScreen = ({
         contentHash,
         "100"
       );
-      console.log("response",response);
-      
+      console.log("response", response);
+
       // Wait for the transaction to be mined
       await response.wait();
-      
+
       // Show success toast
-      toast.success('Image purchased successfully!', {
+      toast.success("Image purchased successfully!", {
         duration: 3000,
-        position: 'top-right',
+        position: "top-right",
       });
     } catch (error) {
-      console.error('Purchase failed:', error);
-      
+      console.error("Purchase failed:", error);
+
       // Show error toast
-      toast.error('Image purchase failed. Please try again.', {
+      toast.error("Image purchase failed. Please try again.", {
         duration: 3000,
-        position: 'top-right',
+        position: "top-right",
       });
     }
   };
@@ -126,6 +128,9 @@ const ImageFullScreen = ({
   // });
 
   const { data: avatar } = useEnsAvatar({ name: name ?? "" });
+
+  // Convert buyPrice to string if it's not already
+  const formattedPrice = typeof buyPrice === 'number' ? buyPrice.toString() : buyPrice;
 
   return (
     <div className="modal modal-open" onClick={() => setIsModalOpen(false)}>
@@ -231,15 +236,19 @@ const ImageFullScreen = ({
               </div>
             )}
 
-            <button
-              className="btn btn-primary w-full"
-              onClick={() => {
-                // Implement buy logic
-                handleBuy();
-              }}
-            >
-              Buy now
-            </button>
+            <div className="mt-auto">
+              <p className="text-lg font-semibold text-center mb-2">
+                Price: {formattedPrice} ETH
+              </p>
+              <button
+                className="btn btn-primary w-full"
+                onClick={() => {
+                  handleBuy();
+                }}
+              >
+                Buy now
+              </button>
+            </div>
           </div>
         </div>
       </div>

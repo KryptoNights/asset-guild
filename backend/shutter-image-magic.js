@@ -49,3 +49,51 @@ async function uploadToLighthouse(filePath) {
         throw new Error('Error uploading to Lighthouse: ' + error.message);
     }
 }
+
+functions.http('helloHttp', async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+  
+    if (req.method === 'OPTIONS') {
+      // Send response to OPTIONS requests
+      res.set('Access-Control-Allow-Methods', 'GET, POST, PUT');
+      res.set('Access-Control-Allow-Headers', 'Content-Type');
+      res.set('Access-Control-Max-Age', '3600');
+      res.status(204).send('');
+    } else {
+      try {
+          if (req.method !== 'PUT') {
+              return res.status(405).send('Only PUT requests are allowed.');
+          }
+  
+          const watermarkText = 'Shutter';
+          const tempDir = tmpdir();
+          const originalImagePath = join(tempDir, `${uuidv4()}_original.png`);
+          const watermarkedImagePath = join(tempDir, `${uuidv4()}_watermarked.png`);
+  
+          // Save original image temporarily
+          fs.writeFileSync(originalImagePath, req.body);
+  
+          // Apply watermark
+          const watermarkedImageBuffer = await addWatermarkToImage(req.body, watermarkText);
+  
+          // Save watermarked image temporarily
+          fs.writeFileSync(watermarkedImagePath, watermarkedImageBuffer);
+  
+          // Upload original image to Lighthouse
+          const originalImageHash = await uploadToLighthouse(originalImagePath);
+  
+          // Upload watermarked image to Lighthouse
+          const watermarkedImageHash = await uploadToLighthouse(watermarkedImagePath);
+  
+          // Respond with the hashes of both images
+          res.status(200).json({
+              originalImageHash,
+              watermarkedImageHash
+          });
+      } catch (error) {
+          console.error(error);
+          res.status(500).send('Error processing the image: ' + error.message);
+      }
+    }
+  });
+  

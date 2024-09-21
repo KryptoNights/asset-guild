@@ -56,7 +56,8 @@ export async function getPurchasedImages(Shutter: Contract) {
                 watermarkedImageHash: tuple[1],        // Second item is the original image hash (IPFS CID)
                 // originalImageHash: tuple[2],     // WITHHOLDING TO DERIVE FROM HELIUM // Third item is the watermarked image hash (IPFS CID)
                 attestationId: Number(tuple[3]),  // Fourth item is the purchase count (convert from BigNumber)
-                image: `https://gateway.lighthouse.storage/ipfs/${tuple[2]}` // WITHHOLDING TO DERIVE FROM HELIUM
+                image: `https://gateway.lighthouse.storage/ipfs/${tuple[2]}`, // WITHHOLDING TO DERIVE FROM HELIUM
+                attestation_url: `https://testnet-scan.sign.global/attestation/onchain_evm_421614_0x${Number(tuple[3]).toString(16).toLowerCase()}`
             };
         });
 

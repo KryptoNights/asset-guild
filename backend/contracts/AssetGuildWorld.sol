@@ -36,11 +36,11 @@ library ByteHasher {
 
 contract Shutter {
     using ByteHasher for bytes;
-    // IWorldID internal immutable worldId;
+    IWorldID internal immutable worldId;
     mapping(uint256 => bool) internal nullifierHashes;
     error DuplicateNullifier(uint256 nullifierHash);
-    // uint256 internal immutable groupId = 1;
-    // uint256 internal immutable externalNullifierHash;
+    uint256 internal immutable groupId = 1;
+    uint256 internal immutable externalNullifierHash;
     event Verified(uint256 nullifierHash);
 
     struct Content {
@@ -107,9 +107,9 @@ contract Shutter {
 	}
 
 	constructor(
-		// IWorldID _worldId, 
-		// string memory _appId, 
-		// string memory _actionId,
+		IWorldID _worldId, 
+		string memory _appId, 
+		string memory _actionId,
 		address _sign_deployed_addr, // 0x4e4af2a21ebf62850fD99Eb6253E1eFBb56098cD
 		uint64 _schemaId // 239
 	) {
@@ -119,31 +119,31 @@ contract Shutter {
 		schemaId = _schemaId;
 	}
 
-	// function verifyOrbAndExecute(address signal, uint256 root, uint256 nullifierHash, uint256[8] calldata proof) public returns (bool) {
-	// 	// First, we make sure this person hasn't done this before
-	// 	if (nullifierHashes[nullifierHash]) revert DuplicateNullifier(nullifierHash);
+	function verifyOrbAndExecute(address signal, uint256 root, uint256 nullifierHash, uint256[8] calldata proof) public returns (bool) {
+		// First, we make sure this person hasn't done this before
+		if (nullifierHashes[nullifierHash]) revert DuplicateNullifier(nullifierHash);
 
-	// 	// We now verify the provided proof is valid and the user is verified by World ID
-	// 	worldId.verifyProof(
-	// 		root,
-	// 		groupId,
-	// 		abi.encodePacked(signal).hashToField(),
-	// 		nullifierHash,
-	// 		externalNullifierHash,
-	// 		proof
-	// 	);
+		// We now verify the provided proof is valid and the user is verified by World ID
+		worldId.verifyProof(
+			root,
+			groupId,
+			abi.encodePacked(signal).hashToField(),
+			nullifierHash,
+			externalNullifierHash,
+			proof
+		);
 
-	// 	// We now record the user has done this, so they can't do it again (proof of uniqueness)
-	// 	nullifierHashes[nullifierHash] = true;
+		// We now record the user has done this, so they can't do it again (proof of uniqueness)
+		nullifierHashes[nullifierHash] = true;
 
-	// 	// Finally, execute your logic here, for example issue a token, NFT, etc...
-	// 	// Make sure to emit some kind of event afterwards!
-    //     creatorsStore[signal].verified = 2;
+		// Finally, execute your logic here, for example issue a token, NFT, etc...
+		// Make sure to emit some kind of event afterwards!
+        creatorsStore[signal].verified = 2;
 
-	// 	emit Verified(nullifierHash);
+		emit Verified(nullifierHash);
 
-    //     return true;
-	// }
+        return true;
+	}
 
     function lightVerify() public returns(bool) {
         creatorsStore[msg.sender].verified = 1;

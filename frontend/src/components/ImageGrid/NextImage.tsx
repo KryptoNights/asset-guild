@@ -68,8 +68,13 @@ export default function NextImage({
           setIsModalOpen={setIsModalOpen}
           imageUrl={image}
           isOpen={isModalOpen}
+          title="sample"
+          photographer="sample"
+          description="lorem ipsum dolor sit amet"
+          purchaseCount={purchaseCount}
         />
       )}
+
     </>
   );
 }

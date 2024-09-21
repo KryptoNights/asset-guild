@@ -5,6 +5,8 @@ export type ImageDataType = {
     category: string
     imageUrl: string
     alt: string
+    contentHash: any
     purchaseCount: number
+    buyPrice: any
     creator: string,
 }

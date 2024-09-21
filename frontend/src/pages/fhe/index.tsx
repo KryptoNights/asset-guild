@@ -27,7 +27,7 @@ const UploadPage = () => {
 
   const MAX_PRICE = 100;
 
-  const allSet = (): boolean => {
+  const allSet = async (): Promise<boolean> => {
     if (!primaryWallet) {
       console.error("No primary wallet connected");
       return false;
@@ -36,11 +36,12 @@ const UploadPage = () => {
       console.error("No wallets connected");
       return false;
     }
+    await primaryWallet.switchNetwork(421614);
     return true;
   };
 
   const sendDataToProtect2 = async () => {
-    if (!allSet()) return;
+    if (!(await allSet())) return;
 
     const signer = await getSigner(primaryWallet!);
     const AssetFHE = new Contract(FHE_CONTRACT, FHE_ABI, signer);
@@ -68,7 +69,7 @@ const UploadPage = () => {
   }
 
   const sendDataToProtect = async () => {
-    if (!allSet()) return;
+    if (!(await allSet())) return;
 
     const signer = await getSigner(primaryWallet!);
     const AssetFHE = new Contract(FHE_CONTRACT, FHE_ABI, signer);
@@ -155,7 +156,7 @@ const UploadPage = () => {
     wallet: string,
     proof: any
   ) => {
-    if (!allSet()) return;
+    if (!(await allSet())) return;
 
     const signer = await getSigner(primaryWallet!);
 
@@ -168,7 +169,7 @@ const UploadPage = () => {
   // TODO: Calls your implemented server route
   const verifyProof = async (proof: any) => {
     console.log(proof);
-    if (!allSet()) return;
+    if (!(await allSet())) return;
 
     const signer = await getSigner(primaryWallet!);
     const Shutter = new Contract(SHUTTER_CONTRACT, ABI, signer);
@@ -187,7 +188,7 @@ const UploadPage = () => {
   const onSuccess = async () => {
     console.log("Success");
     
-    if (!allSet()) return;
+    if (!(await allSet())) return;
     const signer = await getSigner(primaryWallet!);
     const Shutter = new Contract(SHUTTER_CONTRACT, ABI, signer);
 
@@ -196,7 +197,7 @@ const UploadPage = () => {
   };
 
   const checkVerificationLevel = async () => {
-    if (!allSet()) return;
+    if (!(await allSet())) return;
     const signer = await getSigner(primaryWallet!);
     const Shutter = new Contract(SHUTTER_CONTRACT, ABI, signer);
     const verification_level = Number(
@@ -212,7 +213,7 @@ const UploadPage = () => {
   };
 
 //   const handleImageUpload = async (file: File) => {
-//     if (!allSet()) return;
+//     if (!(await allSet())) return;
 //     setSubmitting("Checking verification level");
 //     const signer = await getSigner(primaryWallet!);
 //     const Shutter = new Contract(SHUTTER_CONTRACT, ABI, signer);

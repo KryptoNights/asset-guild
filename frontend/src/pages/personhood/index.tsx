@@ -61,7 +61,7 @@ const Personhood = () => {
 
   return (
     <IDKitWidget
-      app_id="key"
+      app_id="app_staging_2fea25caed39f49f896fe7563b5f764e"
       action="verify-personhood"
       // On-chain only accepts Orb verifications
       verification_level={VerificationLevel.Device}

@@ -17,7 +17,7 @@ const ProfilePage = () => {
   const { primaryWallet } = useDynamicContext();
   const userWallets = useUserWallets();
 
-  const allSet = (): boolean => {
+  const allSet = async (): Promise<boolean> => {
     if (!primaryWallet) {
       console.error("No primary wallet connected");
       return false;
@@ -26,6 +26,7 @@ const ProfilePage = () => {
       console.error("No wallets connected");
       return false;
     }
+    await primaryWallet.switchNetwork(421614);
     return true;
   };
 
@@ -35,7 +36,7 @@ const ProfilePage = () => {
 
   const fetchPurchased = async () => {
     setLoading(true);
-    if (!allSet()) {
+    if (!(await allSet())) {
       setLoading(false);
       return;
     }

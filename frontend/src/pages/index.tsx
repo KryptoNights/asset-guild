@@ -7,7 +7,7 @@ import ImageGrid from "@/components/ImageGrid/ImageGrid";
 import Layout from "@/components/Layout/Layout";
 import { ImageDataType } from "utils/Types";
 import { getAllImages } from "@/apis/graph";
-import UPLOAD from "public/icons/User Interface Icons/Sharp/BLACK/PNG/upload-sharp.png";
+import UPLOAD from "public/icons/upload-sharp.png";
 import Image from "next/image";
 export default function Page() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -64,8 +64,8 @@ export default function Page() {
         </div>
         <div className="mt-16 text-center">
           <Link href="/upload" className="btn btn-primary btn-lg gap-2">
-            <Image src={UPLOAD} alt={""} width={20} height={20} /> Upload Your
-            Assets
+            {/* <Image src={UPLOAD} alt={""} width={20} height={20} /> */}
+            Upload Your Assets
           </Link>
         </div>
         {/* 

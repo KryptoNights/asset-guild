@@ -62,6 +62,12 @@ export default function Page() {
             Decentralized marketplace for unique assests
           </p>
         </div>
+        <div className="mt-16 text-center">
+          <Link href="/upload" className="btn btn-primary btn-lg gap-2">
+            <Image src={UPLOAD} alt={""} width={20} height={20} /> Upload Your
+            Assets
+          </Link>
+        </div>
         {/* 
         <div className="flex flex-wrap justify-center gap-2 mb-8">
           <button
@@ -96,13 +102,6 @@ export default function Page() {
             No images found. Be the first to upload!
           </div>
         )}
-
-        <div className="mt-16 text-center">
-          <Link href="/upload" className="btn btn-primary btn-lg gap-2">
-            <Image src={UPLOAD} alt={""} width={20} height={20} /> Upload Your
-            Photo
-          </Link>
-        </div>
       </div>
     </Layout>
   );

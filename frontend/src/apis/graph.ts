@@ -53,10 +53,10 @@ export async function getPurchasedImages(Shutter: Contract) {
         const formattedResult = result.map((tuple: any) => {
             return {
                 creatorAddress: tuple[0],           // First item in the tuple is the creator's address
-                originalImageHash: tuple[1],        // Second item is the original image hash (IPFS CID)
-                watermarkedImageHash: tuple[2],     // Third item is the watermarked image hash (IPFS CID)
+                watermarkedImageHash: tuple[1],        // Second item is the original image hash (IPFS CID)
+                // originalImageHash: tuple[2],     // WITHHOLDING TO DERIVE FROM HELIUM // Third item is the watermarked image hash (IPFS CID)
                 attestationId: Number(tuple[3]),  // Fourth item is the purchase count (convert from BigNumber)
-                image: `https://gateway.lighthouse.storage/ipfs/${tuple[2]}`
+                image: `https://gateway.lighthouse.storage/ipfs/${tuple[2]}` // WITHHOLDING TO DERIVE FROM HELIUM
             };
         });
 

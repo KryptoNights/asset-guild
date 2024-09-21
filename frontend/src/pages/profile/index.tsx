@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaUser, FaFolder, FaStar, FaUpload } from "react-icons/fa";
+import { FaShare, FaFolder, FaDownload } from "react-icons/fa"; // Import share and folder icons
 import Layout from "@/components/Layout/Layout";
 import { getPurchasedImages } from "@/apis/graph";
 import { useDynamicContext, useUserWallets } from "@/lib/dynamic";
@@ -16,6 +16,7 @@ const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("Collections");
   const [purchasedImages, setPurchasedImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [attestationId, setAttestationId] = useState();
 
   const { primaryWallet } = useDynamicContext();
   const userWallets = useUserWallets();
@@ -71,7 +72,6 @@ const ProfilePage = () => {
       const permission = client.extractPermitPermission(permit);
       
       for (let i = 0; i < images_.length; i++) {
-
         let getval = await AssetGuildFHE.getOriginalContent(
           images_[i].watermarkedImageHash,
           permission.publicKey
@@ -89,7 +89,6 @@ const ProfilePage = () => {
         const k4 = client.unseal(FHE_CONTRACT, getval[4]);
         const kc4 = String.fromCharCode(Number(k4));
 
-
         const original_hash = String(getval[0]) + kc1 + kc2 + kc3 + kc4;
 
         images.push({
@@ -99,12 +98,12 @@ const ProfilePage = () => {
           attestationId: images_[i].attestationId,
           image: `https://gateway.lighthouse.storage/ipfs/${original_hash}`,
         });
+
       }
     }
 
     if (images.length === 0) {
       images = images_;
-
       if (images) {
         setPurchasedImages(images);
       }
@@ -112,123 +111,78 @@ const ProfilePage = () => {
     }
   };
 
-  // Dummy data for other sections
-  const userAddress = "0x1234...5678";
-  const userBalance = "1.23 ETH";
-  const userName = "John Doe";
-  const userWatchlist = [
-    { id: 1, name: "Item 1", image: "/assets/sample-photo.avif" },
-    { id: 2, name: "Item 2", image: "/assets/sample-photo.avif" },
-    { id: 3, name: "Item 3", image: "/assets/sample-photo.avif" },
-  ];
-  const userUploadedImages = [
-    { id: 1, name: "Upload 1", image: "/assets/sample-photo.avif" },
-    { id: 2, name: "Upload 2", image: "/assets/sample-photo.avif" },
-    { id: 3, name: "Upload 3", image: "/assets/sample-photo.avif" },
-  ];
-
-  const tabs = [
-    { name: "Collections", icon: FaFolder },
-    { name: "Watchlist", icon: FaStar },
-    { name: "Uploads", icon: FaUpload },
-  ];
-
-  const renderTabContent = () => {
-    const renderGrid = (items: any[]) => (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {items.map((item: any) => (
+  const renderCollections = () => {
+    if (loading) {
+      return <p className="text-center text-gray-600">Loading...</p>;
+    }
+    if (purchasedImages.length === 0) {
+      return (
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">No images purchased yet.</p>
+          <Link
+            href="/"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+          >
+            Go to Marketplace
+          </Link>
+        </div>
+      );
+    }
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {purchasedImages.map((item: any) => (
           <div
             key={item.id}
-            className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105"
+            className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105 relative"
           >
             <Image
               src={item.image || "/assets/placeholder-image.jpg"}
               alt={item.name}
               width={300}
-              height={300}
-              className="w-full h-48 object-cover"
+              height={400} // Adjust height for aspect ratio
+              className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
             />
-            <div className="p-4">
-              <h3 className="text-lg font-semibold text-gray-800">
-                {item.name}
-              </h3>
+            {/* Buttons outside the image */}
+            <div className="flex justify-between pt-2">
+              <button className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-1 px-2 rounded w-[100%] mr-2" onClick={() => window.open(item.attestation_url, "_blank")}>
+                View Attestation
+              </button>
+              <button className="bg-gray-600 hover:bg-green-600 text-white text-sm font-semibold py-1 px-2 rounded" onClick={() => {window.open(item.image, "_blank")}}>
+                <FaDownload />
+              </button>
             </div>
           </div>
         ))}
       </div>
     );
-
-    switch (activeTab) {
-      case "Collections":
-        if (loading) {
-          return <p className="text-center text-gray-600">Loading...</p>;
-        }
-        if (purchasedImages.length === 0) {
-          return (
-            <div className="text-center">
-              <p className="text-gray-600 mb-4">No images purchased yet.</p>
-              <Link
-                href="/"
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-              >
-                Go to Marketplace
-              </Link>
-            </div>
-          );
-        }
-        return renderGrid(purchasedImages);
-      case "Watchlist":
-        return renderGrid(userWatchlist);
-      case "Uploads":
-        return renderGrid(userUploadedImages);
-      default:
-        return null;
-    }
   };
 
   return (
     <Layout>
       <div className="min-h-screen bg-gray-100 text-gray-800">
         <div className="container mx-auto px-4 py-8">
-          {/* <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <div className="flex flex-col sm:flex-row items-center">
-              <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mb-4 sm:mb-0 sm:mr-6">
-                <FaUser className="text-4xl text-blue-500" />
-              </div>
-              <div className="text-center sm:text-left">
-                <h1 className="text-2xl font-bold mb-2">{userName}</h1>
-                <p className="mb-1 text-gray-600">Address: {userAddress}</p>
-                <p className="text-gray-600">Balance: {userBalance}</p>
-              </div>
-            </div>
-          </div> */}
-
           <div className="flex flex-col md:flex-row">
             {/* Sidebar */}
             <div className="w-full md:w-64 mb-6 md:mb-0 md:mr-8">
               <div className="bg-white rounded-lg shadow-md p-4">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.name}
-                    className={`flex items-center w-full text-left py-3 px-4 rounded mb-2 transition-colors ${
-                      activeTab === tab.name
-                        ? "bg-blue-500 text-white"
-                        : "hover:bg-blue-100 text-gray-700"
-                    }`}
-                    onClick={() => setActiveTab(tab.name)}
-                  >
-                    <tab.icon className="mr-3" />
-                    {tab.name}
-                  </button>
-                ))}
+                <button
+                  className={`flex items-center w-full text-left py-3 px-4 rounded mb-2 transition-colors ${
+                    activeTab === "Collections"
+                      ? "bg-blue-500 text-white"
+                      : "hover:bg-blue-100 text-gray-700"
+                  }`}
+                  onClick={() => setActiveTab("Collections")}
+                >
+                  <FaFolder className="mr-3" />
+                  Collections
+                </button>
               </div>
             </div>
-
-            {/* Main content */}
+            {/* Main Content */}
             <div className="flex-1">
               <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-bold mb-6">Your {activeTab}</h2>
-                {renderTabContent()}
+                <h2 className="text-xl font-bold mb-6">Your Collections</h2>
+                {renderCollections()}
               </div>
             </div>
           </div>

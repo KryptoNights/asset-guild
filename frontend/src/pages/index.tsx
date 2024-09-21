@@ -46,7 +46,7 @@ export default function Page() {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8 min-h-screen bg-base-100">
+      <div className="container mx-auto px-4 py-8 min-h-screen ">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-primary">
             Web3 Stock Photos
@@ -59,7 +59,9 @@ export default function Page() {
         <div className="flex flex-wrap justify-center gap-2 mb-8">
           <button
             onClick={() => setSelectedCategory(null)}
-            className={`btn btn-sm ${!selectedCategory ? 'btn-primary' : 'btn-outline'}`}
+            className={`btn btn-sm ${
+              !selectedCategory ? "btn-primary" : "btn-outline"
+            }`}
           >
             All
           </button>
@@ -67,7 +69,9 @@ export default function Page() {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`btn btn-sm ${category === selectedCategory ? 'btn-primary' : 'btn-outline'}`}
+              className={`btn btn-sm ${
+                category === selectedCategory ? "btn-primary" : "btn-outline"
+              }`}
             >
               {category}
             </button>
@@ -87,10 +91,7 @@ export default function Page() {
         )}
 
         <div className="mt-16 text-center">
-          <Link
-            href="/upload"
-            className="btn btn-primary btn-lg gap-2"
-          >
+          <Link href="/upload" className="btn btn-primary btn-lg gap-2">
             <Upload className="w-5 h-5" />
             Upload Your Photo
           </Link>

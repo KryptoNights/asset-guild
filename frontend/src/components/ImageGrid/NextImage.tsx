@@ -14,7 +14,12 @@ type Image = {
   purchaseCount: number;
 };
 
-export default function NextImage({ image, alt, ar, purchaseCount: initialPurchases }: Image) {
+export default function NextImage({
+  image,
+  alt,
+  ar,
+  purchaseCount: initialPurchases,
+}: Image) {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -25,6 +30,7 @@ export default function NextImage({ image, alt, ar, purchaseCount: initialPurcha
     setIsModalOpen(true);
   };
 
+  console.log("hh", ar);
   const closeModal = () => setIsModalOpen(false);
 
   return (
@@ -34,24 +40,19 @@ export default function NextImage({ image, alt, ar, purchaseCount: initialPurcha
           "group relative mb-4 overflow-hidden rounded bg-neutral-two dark:bg-neutral-nine hover:cursor-pointer",
           "md:mb-4",
           "lg:mb-8",
-          ar === "square"
-            ? "aspect-square"
-            : ar === "landscape"
-            ? "aspect-video"
-            : "aspect-portrait"
+          "aspect-[3/4]" // Set aspect ratio to 3:4
         )}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={openModal}
       >
         <Image
-          loading={ar === "portrait" ? "eager" : "lazy"}
-          priority={ar === "portrait" ? true : false}
+          loading="lazy" // Set loading to lazy for all images
+          priority={false} // Set priority to false for all images
           sizes="(min-width: 66em) 33vw, (min-width: 44em) 50vw, 100vw"
           alt={alt}
           src={image}
-          width={2000}
-          height={2000}
+          layout="fill" // Make the image fill the parent div
           className={clsx(
             "object-cover duration-700 ease-in-out group-hover:cursor-pointer group-hover:opacity-90",
             isLoading
@@ -60,17 +61,6 @@ export default function NextImage({ image, alt, ar, purchaseCount: initialPurcha
           )}
           onLoad={() => setIsLoading(false)}
         />
-        {/* Always visible purchase count */}
-        <div className="absolute bottom-2 left-2 bg-white bg-opacity-75 px-2 py-1 rounded-full text-xs font-medium flex items-center shadow-md">
-          <ShoppingCart className="w-3 h-3 mr-1 text-gray-600" />
-          <span className="text-gray-800">{purchaseCount} purchased</span>
-        </div>
-        {/* Hover effect (optional, you can remove this if not needed) */}
-        {isHovered && (
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            {/* You can add additional hover content here if needed */}
-          </div>
-        )}
       </figure>
 
       {isModalOpen && (

@@ -17,7 +17,7 @@ export default function Navbar() {
   const { data: avatar } = useEnsAvatar({ name: name ?? "" });
 
   return (
-    <nav className="bg-base-100 shadow-md">
+    <nav className="shadow-md">
       <div className="navbar container mx-auto">
         <div className="navbar-start">
           <Link href="/" className="btn btn-ghost normal-case text-xl">
@@ -30,7 +30,7 @@ export default function Navbar() {
 
         <div className="navbar-center hidden lg:flex">
           <div className="form-control">
-            <div className="input-group flex">
+            {/* <div className="input-group flex">
               <input
                 type="text"
                 placeholder="Search photos"
@@ -39,7 +39,7 @@ export default function Navbar() {
               <button className="btn btn-square btn-primary">
                 <Search className="h-5 w-5" />
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 

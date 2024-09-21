@@ -130,16 +130,16 @@ const UploadPage = () => {
 
     console.log("Sending data to protect 7");
 
-    const k1 = await client.unseal(FHE_CONTRACT, getval[1]);
+    const k1 = client.unseal(FHE_CONTRACT, getval[1]);
     const kc1 = String.fromCharCode(Number(k1));
     console.log("k1: ", k1, kc1);
-    const k2 = await client.unseal(FHE_CONTRACT, getval[2]);
+    const k2 = client.unseal(FHE_CONTRACT, getval[2]);
     const kc2 = String.fromCharCode(Number(k2));
     console.log("k2: ", k2, kc2);
-    const k3 = await client.unseal(FHE_CONTRACT, getval[3]);
+    const k3 = client.unseal(FHE_CONTRACT, getval[3]);
     const kc3 = String.fromCharCode(Number(k3));
     console.log("k3: ", k3, kc3);
-    const k4 = await client.unseal(FHE_CONTRACT, getval[4]);
+    const k4 = client.unseal(FHE_CONTRACT, getval[4]);
     const kc4 = String.fromCharCode(Number(k4));
     console.log("k4: ", k4, kc4);
 

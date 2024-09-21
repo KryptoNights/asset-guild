@@ -5,9 +5,12 @@ import { FaUser, FaFolder, FaStar, FaUpload } from "react-icons/fa";
 import Layout from "@/components/Layout/Layout";
 import { getPurchasedImages } from "@/apis/graph";
 import { useDynamicContext, useUserWallets } from "@/lib/dynamic";
-import { getSigner } from "@dynamic-labs/ethers-v6";
-import { ABI, SHUTTER_CONTRACT } from "utils/consts";
+import { getSigner, getWeb3Provider } from "@dynamic-labs/ethers-v6";
+import { ABI, FHE_ABI, FHE_CONTRACT, SHUTTER_CONTRACT } from "utils/consts";
 import { Contract } from "ethers";
+import { FhenixClient, getPermit } from "fhenixjs";
+
+const DUAL_CHAIN_ENABLED = false;
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("Collections");
@@ -32,7 +35,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     fetchPurchased();
-  }, [primaryWallet, userWallets]);
+  }, []);
 
   const fetchPurchased = async () => {
     setLoading(true);
@@ -44,13 +47,69 @@ const ProfilePage = () => {
     const signer = await getSigner(primaryWallet!);
     const Shutter = new Contract(SHUTTER_CONTRACT, ABI, signer);
 
-    const images = await getPurchasedImages(Shutter);
-    console.log(images);
+    const images_ = await getPurchasedImages(Shutter);
+    console.log(images_);
 
-    if (images) {
-      setPurchasedImages(images);
+    let images: any = [];
+
+    if (DUAL_CHAIN_ENABLED) {
+      await primaryWallet?.switchNetwork(8008135);
+      while (true) {
+        if (await primaryWallet?.getNetwork() === 8008135) {
+          break;
+        }
+      }
+      const provider = await getWeb3Provider(primaryWallet!);
+      const client = new FhenixClient({ provider });
+      const AssetGuildFHE = new Contract(FHE_CONTRACT, FHE_ABI, signer);
+      
+      const permit = await getPermit(FHE_CONTRACT, provider);
+      if (!permit) {
+        console.error("Permit not found");
+        return;
+      }
+      const permission = client.extractPermitPermission(permit);
+      
+      for (let i = 0; i < images_.length; i++) {
+
+        let getval = await AssetGuildFHE.getOriginalContent(
+          images_[i].watermarkedImageHash,
+          permission.publicKey
+        );
+
+        const k1 = client.unseal(FHE_CONTRACT, getval[1]);
+        const kc1 = String.fromCharCode(Number(k1));
+
+        const k2 = client.unseal(FHE_CONTRACT, getval[2]);
+        const kc2 = String.fromCharCode(Number(k2));
+
+        const k3 = client.unseal(FHE_CONTRACT, getval[3]);
+        const kc3 = String.fromCharCode(Number(k3));
+
+        const k4 = client.unseal(FHE_CONTRACT, getval[4]);
+        const kc4 = String.fromCharCode(Number(k4));
+
+
+        const original_hash = String(getval[0]) + kc1 + kc2 + kc3 + kc4;
+
+        images.push({
+          creatorAddress: images_[i].creatorAddress,
+          watermarkedImageHash: images_[i].watermarkedImageHash,
+          originalImageHash: original_hash,
+          attestationId: images_[i].attestationId,
+          image: `https://gateway.lighthouse.storage/ipfs/${original_hash}`,
+        });
+      }
     }
-    setLoading(false);
+
+    if (images.length === 0) {
+      images = images_;
+
+      if (images) {
+        setPurchasedImages(images);
+      }
+      setLoading(false);
+    }
   };
 
   // Dummy data for other sections

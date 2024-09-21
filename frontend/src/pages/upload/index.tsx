@@ -2,13 +2,14 @@
 import ImageFullScreen from "@/components/ImageFullScreen/ImageFullScreen";
 import Layout from "@/components/Layout/Layout";
 import { useDynamicContext, useUserWallets } from "@/lib/dynamic";
-import { getSigner } from "@dynamic-labs/ethers-v6";
+import { getSigner, getWeb3Provider } from "@dynamic-labs/ethers-v6";
 // import fs from 'fs';
 import React, { useState, ChangeEvent, useEffect } from "react";
-import { ABI, IMAGE_MAGIC_URL, ORB_VERIFICATION, SHUTTER_CONTRACT } from "utils/consts";
-import { Contract } from "ethers";
+import { ABI, FHE_ABI, FHE_CONTRACT, IMAGE_MAGIC_URL, ORB_VERIFICATION, SHUTTER_CONTRACT } from "utils/consts";
+import { Contract, JsonRpcProvider } from "ethers";
 import { IDKitWidget, VerificationLevel } from "@worldcoin/idkit";
 import axios from "axios";
+import { FhenixClient, EncryptionTypes, getPermit } from 'fhenixjs';
 
 // function readFileAsBuffer(filePath: any) {
 //   return new Promise((resolve, reject) => {
@@ -81,6 +82,11 @@ const UploadPage = () => {
       return false;
     }
     await primaryWallet.switchNetwork(421614);
+    while (true) {
+      if (await primaryWallet.getNetwork() === 421614) {
+        break;
+      }
+    }
     return true;
   };
 
@@ -148,9 +154,9 @@ const UploadPage = () => {
 
   useEffect(() => {
     checkVerificationLevel();
-  }, [primaryWallet]);
+  }, []);
 
-  const handleImageUpload = async (file: File) => {
+  const handleImageUpload = async (file: File, password: number[]) => {
     if (!(await allSet())) return;
     
     setSubmitting("Checking verification level");
@@ -169,6 +175,47 @@ const UploadPage = () => {
     setSubmitting("Storing on-chain");
     const uploadRes = await Shutter.uploadContent(res.watermarkedImageHash, res.originalImageHash, price);
     await uploadRes.wait();
+
+    await primaryWallet?.switchNetwork(8008135);
+    while (true) {
+      if (await primaryWallet?.getNetwork() === 8008135) {
+        break;
+      }
+    }
+
+    const AssetGuildFHE = new Contract(FHE_CONTRACT, FHE_ABI, signer);
+    const provider = await getWeb3Provider(primaryWallet!);
+    const client = new FhenixClient({ provider });
+
+    let iek1 = await client.encrypt(password[0], EncryptionTypes.uint32);
+    let iek2 = await client.encrypt(password[1], EncryptionTypes.uint32);
+    let iek3 = await client.encrypt(password[2], EncryptionTypes.uint32);
+    let iek4 = await client.encrypt(password[3], EncryptionTypes.uint32);
+
+    const permit = await getPermit(FHE_CONTRACT, provider);
+    if (!permit) {
+      console.error("Permit not found");
+      return;
+    }
+
+    const permission = client.extractPermitPermission(permit);
+    client.storePermit(permit);
+    let fhe_res = await AssetGuildFHE.addHashToProtect(
+      res.originalImageHash,
+      res.watermarkedImageHash,
+      iek1,
+      iek2,
+      iek3,
+      iek4,
+    );
+    await fhe_res.wait();
+
+    await primaryWallet?.switchNetwork(421614);
+    while (true) {
+      if (await primaryWallet?.getNetwork() === 421614) {
+        break;
+      }
+    }
 
     setSubmitting("Upload Content");
   }
@@ -238,7 +285,7 @@ const UploadPage = () => {
     }
     // Implement submission logic here
     console.log("Submitting:", { image, price, tags });
-    await handleImageUpload(image);
+    await handleImageUpload(image, [6,2,5,3]);
     setError(null);
   };
   

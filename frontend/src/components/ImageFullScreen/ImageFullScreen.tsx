@@ -22,6 +22,8 @@ import { Contract } from "ethers";
 import { purchaseContent } from "utils/transitions";
 import {
   ABI,
+  FHE_ABI,
+  FHE_CONTRACT,
   IMAGE_MAGIC_URL,
   ORB_VERIFICATION,
   SHUTTER_CONTRACT,
@@ -58,7 +60,7 @@ const ImageFullScreen = ({
   const { primaryWallet } = useDynamicContext();
   const userWallets = useUserWallets();
 
-  const allSet = (): boolean => {
+  const allSet = async (): Promise<boolean> => {
     if (!primaryWallet) {
       console.error("No primary wallet connected");
       return false;
@@ -67,10 +69,16 @@ const ImageFullScreen = ({
       console.error("No wallets connected");
       return false;
     }
+    await primaryWallet.switchNetwork(421614);
+    while (true) {
+      if (await primaryWallet.getNetwork() === 421614) {
+        break;
+      }
+    }
     return true;
   };
   const handleBuy = async () => {
-    if (!allSet()) return;
+    if (!(await allSet())) return;
 
     const signer = await getSigner(primaryWallet!);
     const Shutter = new Contract(SHUTTER_CONTRACT, ABI, signer);
@@ -83,9 +91,26 @@ const ImageFullScreen = ({
         "100"
       );
       console.log("response", response);
-
       // Wait for the transaction to be mined
       await response.wait();
+
+      await primaryWallet?.switchNetwork(8008135);
+      while (true) {
+        if (await primaryWallet?.getNetwork() === 8008135) {
+          break;
+        }
+      }
+
+      const AssetGuildFHE = new Contract(FHE_CONTRACT, FHE_ABI, signer);
+      const permissionSetting = await AssetGuildFHE.addPermissionToView(contentHash, await signer.getAddress(), 1);
+      await permissionSetting.wait();
+
+      await primaryWallet?.switchNetwork(421614);
+      while (true) {
+        if (await primaryWallet?.getNetwork() === 421614) {
+          break;
+        }
+      }
 
       // Show success toast
       toast.success("Image purchased successfully!", {

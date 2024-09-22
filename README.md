@@ -64,8 +64,8 @@ The project is built with a strong focus on Ethereum, leveraging its robust ecos
 
 - Smart Contracts: Solidity, deployed on Arbitrum Sepolia
 - Encryption: Fully Homomorphic Encryption via Fhenix
-- Frontend: (Add details about your frontend technology)
-- Backend: (Add details about your backend technology)
+- Frontend: Next.js
+- Backend: IPFS
 - Blockchain Integration: Dynamic for wallet connections, Arbitrum for scalability
 - Payment Processing: Circle integration
 - Identity Verification: Worldcoin's World ID

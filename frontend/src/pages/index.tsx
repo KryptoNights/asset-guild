@@ -56,16 +56,16 @@ export default function Page() {
       <div className="container mx-auto px-4 py-8 min-h-screen ">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-primary">
-            ⌐◑-◑ Web3 Stock Gaming Assets
+            ⌐◑-◑ Secure marketplace for your assets
           </h1>
           <p className="text-lg md:text-xl text-base-content opacity-75">
-            Decentralized marketplace for unique assests
+            Sell pay-to-view content without leaking them
           </p>
         </div>
         <div className="mt-16 text-center">
           <Link href="/upload" className="btn btn-primary btn-lg gap-2">
             {/* <Image src={UPLOAD} alt={""} width={20} height={20} /> */}
-            Upload Your Assets
+            Submit Your Assets
           </Link>
         </div>
         {/* 

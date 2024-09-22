@@ -136,7 +136,7 @@ const ProfilePage = () => {
     return (
       <div
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-        style={{ height: "100%" }}
+        style={{ height: "100%", gap: "80px" }}
       >
         {purchasedImages.map((item: any) => (
           <div key={item.id} className="flex-cols" style={{ height: "100%" }}>

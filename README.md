@@ -57,8 +57,8 @@ We're revolutionizing content licensing with blockchain technology. Our platform
 
 ## Technical Stack
 
-- Frontend: (Add details about your frontend technology)
-- Backend: (Add details about your backend technology)
+- Frontend: Next.js
+- Backend: 
 - Blockchain Integration: Dynamic for wallet connections
 - Identity Verification: Worldcoin's World ID
 
@@ -66,18 +66,4 @@ We're revolutionizing content licensing with blockchain technology. Our platform
 
 Our platform prioritizes the security of both creators and consumers. We use blockchain technology for secure transactions and Worldcoin's World ID for identity verification, ensuring a safe environment for all users.
 
-## Support
 
-(Add information about how users can get support or contact your team)
-
-## Contributing
-
-(If applicable, add information about how others can contribute to the project)
-
-## License
-
-(Add your license information here)
-
----
-
-© 2024 Content Licensing Platform. All rights reserved.

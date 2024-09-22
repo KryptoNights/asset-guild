@@ -2,8 +2,8 @@
 const { initiateDeveloperControlledWalletsClient } = require('@circle-fin/developer-controlled-wallets');
 const { initiateSmartContractPlatformClient } = require('@circle-fin/smart-contract-platform');
 
-const API_KEY = "KEY";
-const ENTITY_SECRET = "SECRET";
+const API_KEY = "TEST_API_KEY:b56d75685ecb05e437a8e09f725bb797:84c05ce437661e52be4a6721b7f288a5";
+const ENTITY_SECRET = "21d4a9bf2efb8c5261afd7e95ce63b54b16b68fe14d35b419dd30b29f358509a"
 
 const circleDeveloperSdk = initiateDeveloperControlledWalletsClient({
   apiKey: API_KEY,

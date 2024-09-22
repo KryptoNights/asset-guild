@@ -1,0 +1,8 @@
+{
+  "arbitrum-sepolia": {
+    "Shutter": {
+      "address": "0x97107847b68185b317a0D14cBE60cCa0d2860685",
+      "startBlock": 82265804
+    }
+  }
+}

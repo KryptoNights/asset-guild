@@ -1,4 +1,6 @@
-# Content Licensing Platform
+# Secure marketplace for your assets
+Sell pay-to-view content without leaking them
+
 
 A decentralized, Ethereum-centric pay-to-view platform for content creators and consumers, leveraging advanced cryptographic techniques and layer 2 solutions.
 
